@@ -15,14 +15,14 @@ ReactOpenWallet generate a styled button at the top of your component within a p
 ```tsx
 import React, { Component } from 'react'
 
-import ReactOpenWallet, { OpenWallet } from 'react-open-wallet'
+import WalletProvider, { OpenWallet } from 'react-open-wallet'
 
 class App extends Component {
   render() {
     return (
-      <ReactOpenWallet>
+      <WalletProvider>
         <OpenWallet />
-      </ReactOpenWallet>
+      </WalletProvider>
     )
   }
 }

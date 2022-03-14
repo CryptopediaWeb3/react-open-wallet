@@ -1,32 +1,41 @@
 import React, { createContext, useEffect, useState, useContext } from 'react';
 
-const WalletContext = createContext({
+var WalletContext = createContext({
   account: '',
-  checkWallet: () => {},
-  requestAccount: () => {}
+  checkWallet: function checkWallet() {},
+  requestAccount: function requestAccount() {}
 });
 
-const checkWallet = () => {
+var checkWallet = function checkWallet() {
   if (!window.ethereum) {
     console.error('Install MetaMask');
   }
 
   return window.ethereum !== undefined || window.ethereum !== null;
 };
-const requestAccount = async setAccount => {
-  if (window.ethereum) {
-    const metaAccounts = await window.ethereum.request({
-      method: 'eth_requestAccounts'
-    });
-    setAccount(metaAccounts[0]);
+var requestAccount = function requestAccount(setAccount) {
+  try {
+    var _temp2 = function () {
+      if (window.ethereum) {
+        return Promise.resolve(window.ethereum.request({
+          method: 'eth_requestAccounts'
+        })).then(function (metaAccounts) {
+          setAccount(metaAccounts[0]);
+        });
+      }
+    }();
+
+    return Promise.resolve(_temp2 && _temp2.then ? _temp2.then(function () {}) : void 0);
+  } catch (e) {
+    return Promise.reject(e);
   }
 };
 
-const useListener = setAccount => {
-  useEffect(() => {
+var useListener = function useListener(setAccount) {
+  useEffect(function () {
     checkWallet();
 
-    const updateWallet = metaAccounts => {
+    var updateWallet = function updateWallet(metaAccounts) {
       if (metaAccounts.length) {
         setAccount(metaAccounts[0]);
       } else {
@@ -41,7 +50,7 @@ const useListener = setAccount => {
       }).then(updateWallet);
     }
 
-    return () => {
+    return function () {
       if (window.ethereum) {
         window.ethereum.removeListener('accountsChanged', updateWallet);
       }
@@ -49,27 +58,31 @@ const useListener = setAccount => {
   }, [setAccount]);
 };
 
-const WalletProvider = ({
-  children
-}) => {
-  const [account, setAccount] = useState('');
+var WalletProvider = function WalletProvider(_ref) {
+  var children = _ref.children;
 
-  const getAccount = () => requestAccount(setAccount);
+  var _useState = useState(''),
+      account = _useState[0],
+      setAccount = _useState[1];
+
+  var getAccount = function getAccount() {
+    return requestAccount(setAccount);
+  };
 
   useListener(setAccount);
   return React.createElement(WalletContext.Provider, {
     value: {
-      account,
-      checkWallet,
+      account: account,
+      checkWallet: checkWallet,
       requestAccount: getAccount
     }
   }, children);
 };
 
-const OpenWallet = () => {
-  const {
-    requestAccount
-  } = useWallet();
+var OpenWallet = function OpenWallet() {
+  var _useWallet = useWallet(),
+      requestAccount = _useWallet.requestAccount;
+
   return React.createElement("button", {
     style: {
       appearance: 'none',
@@ -89,8 +102,8 @@ const OpenWallet = () => {
     onClick: requestAccount
   }, "Connect Wallet");
 };
-const useWallet = () => {
-  const walletCtx = useContext(WalletContext);
+var useWallet = function useWallet() {
+  var walletCtx = useContext(WalletContext);
   return walletCtx;
 };
 
