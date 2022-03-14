@@ -61,9 +61,8 @@ var useListener = function useListener(setAccount) {
   }, [setAccount]);
 };
 
-var ReactOpenWallet = function ReactOpenWallet(_ref) {
-  var children = _ref.children,
-      hideButton = _ref.hideButton;
+var WalletProvider = function WalletProvider(_ref) {
+  var children = _ref.children;
 
   var _useState = React.useState(''),
       account = _useState[0],
@@ -80,7 +79,14 @@ var ReactOpenWallet = function ReactOpenWallet(_ref) {
       checkWallet: checkWallet,
       requestAccount: getAccount
     }
-  }, !hideButton && React__default.createElement("button", {
+  }, children);
+};
+
+var OpenWallet = function OpenWallet() {
+  var _useWallet = useWallet(),
+      requestAccount = _useWallet.requestAccount;
+
+  return React__default.createElement("button", {
     style: {
       appearance: 'none',
       outline: 'none',
@@ -96,15 +102,15 @@ var ReactOpenWallet = function ReactOpenWallet(_ref) {
       padding: '15px ',
       textAlign: 'center'
     },
-    onClick: getAccount
-  }, "Connect Wallet"), children);
+    onClick: requestAccount
+  }, "Connect Wallet");
 };
-
 var useWallet = function useWallet() {
   var walletCtx = React.useContext(WalletContext);
   return walletCtx;
 };
 
-exports.default = ReactOpenWallet;
+exports.OpenWallet = OpenWallet;
+exports.default = WalletProvider;
 exports.useWallet = useWallet;
 //# sourceMappingURL=index.js.map

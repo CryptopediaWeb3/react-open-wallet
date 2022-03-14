@@ -5,10 +5,7 @@ import { checkWallet, requestAccount } from './tools'
 import { useListener } from './hooks'
 
 // COMPONENT
-const ReactOpenWallet: React.FC<ReactOpenWalletProps> = ({
-  children,
-  hideButton
-}) => {
+const WalletProvider: React.FC = ({ children }) => {
   // WALLET STATE
   const [account, setAccount] = useState<string>('')
 
@@ -22,31 +19,37 @@ const ReactOpenWallet: React.FC<ReactOpenWalletProps> = ({
     <WalletContext.Provider
       value={{ account, checkWallet, requestAccount: getAccount }}
     >
-      {!hideButton && (
-        <button
-          style={{
-            appearance: 'none',
-            outline: 'none',
-            backgroundImage:
-              'linear-gradient(92.88deg, #455EB5 9.16%, #5643CC 43.89%, #673FD7 64.72%)',
-            borderRadius: '10px',
-            borderStyle: 'none',
-            boxSizing: 'border-box',
-            color: '#FFFFFF',
-            cursor: 'pointer',
-            fontFamily: 'monospace',
-            fontSize: '16px',
-            fontWeight: 'bold',
-            padding: '15px ',
-            textAlign: 'center'
-          }}
-          onClick={getAccount}
-        >
-          Connect Wallet
-        </button>
-      )}
       {children}
     </WalletContext.Provider>
+  )
+}
+
+// OPEN WALLET BUTTON
+export const OpenWallet: React.FC = () => {
+  const { requestAccount } = useWallet()
+
+  return (
+    <button
+      style={{
+        appearance: 'none',
+        outline: 'none',
+        backgroundImage:
+          'linear-gradient(92.88deg, #455EB5 9.16%, #5643CC 43.89%, #673FD7 64.72%)',
+        borderRadius: '10px',
+        borderStyle: 'none',
+        boxSizing: 'border-box',
+        color: '#FFFFFF',
+        cursor: 'pointer',
+        fontFamily: 'monospace',
+        fontSize: '16px',
+        fontWeight: 'bold',
+        padding: '15px ',
+        textAlign: 'center'
+      }}
+      onClick={requestAccount}
+    >
+      Connect Wallet
+    </button>
   )
 }
 
@@ -63,4 +66,4 @@ export const useWallet = () => {
   return walletCtx
 }
 
-export default ReactOpenWallet
+export default WalletProvider

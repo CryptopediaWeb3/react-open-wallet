@@ -15,11 +15,15 @@ ReactOpenWallet generate a styled button at the top of your component within a p
 ```tsx
 import React, { Component } from 'react'
 
-import ReactOpenWallet from 'react-open-wallet'
+import ReactOpenWallet, { OpenWallet } from 'react-open-wallet'
 
 class App extends Component {
   render() {
-    return <ReactOpenWallet>{/* YOUR CODE */}</ReactOpenWallet>
+    return (
+      <ReactOpenWallet>
+        <OpenWallet />
+      </ReactOpenWallet>
+    )
   }
 }
 ```
@@ -47,12 +51,6 @@ class App extends Component {
   }
 }
 ```
-
-### Component props
-
-| Name       | Type | Default | Description    |
-| ---------- | ---- | ------- | -------------- |
-| hideButton | bool | false   | Hide entire UI |
 
 ```
 home.tsx

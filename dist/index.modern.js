@@ -49,9 +49,8 @@ const useListener = setAccount => {
   }, [setAccount]);
 };
 
-const ReactOpenWallet = ({
-  children,
-  hideButton
+const WalletProvider = ({
+  children
 }) => {
   const [account, setAccount] = useState('');
 
@@ -64,7 +63,14 @@ const ReactOpenWallet = ({
       checkWallet,
       requestAccount: getAccount
     }
-  }, !hideButton && React.createElement("button", {
+  }, children);
+};
+
+const OpenWallet = () => {
+  const {
+    requestAccount
+  } = useWallet();
+  return React.createElement("button", {
     style: {
       appearance: 'none',
       outline: 'none',
@@ -80,15 +86,14 @@ const ReactOpenWallet = ({
       padding: '15px ',
       textAlign: 'center'
     },
-    onClick: getAccount
-  }, "Connect Wallet"), children);
+    onClick: requestAccount
+  }, "Connect Wallet");
 };
-
 const useWallet = () => {
   const walletCtx = useContext(WalletContext);
   return walletCtx;
 };
 
-export default ReactOpenWallet;
-export { useWallet };
+export default WalletProvider;
+export { OpenWallet, useWallet };
 //# sourceMappingURL=index.modern.js.map
