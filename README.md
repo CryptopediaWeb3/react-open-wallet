@@ -44,9 +44,9 @@ import ReactOpenWallet from 'react-open-wallet'
 class App extends Component {
   render() {
     return (
-      <ReactOpenWallet hideButton>
+      <WalletProvider>
         <Home />
-      </ReactOpenWallet>
+      </WalletProvider>
     )
   }
 }
