@@ -1,7 +1,5 @@
 # react-open-wallet
 
-> Made with create-react-library
-
 [![NPM](https://img.shields.io/npm/v/react-open-wallet.svg)](https://www.npmjs.com/package/react-open-wallet) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
 ## Install
@@ -10,20 +8,79 @@
 npm install --save react-open-wallet
 ```
 
-## Usage
+## Normal usage
+
+ReactOpenWallet generate a styled button at the top of your component within a provider (at this time just works with MetaMask)
 
 ```tsx
 import React, { Component } from 'react'
 
-import MyComponent from 'react-open-wallet'
-import 'react-open-wallet/dist/index.css'
+import ReactOpenWallet from 'react-open-wallet'
 
-class Example extends Component {
+class App extends Component {
   render() {
-    return <MyComponent />
+    return <ReactOpenWallet>{/* YOUR CODE */}</ReactOpenWallet>
   }
 }
 ```
+
+## Advanced usage
+
+If you want to control the flow of the wallet just set hideButton to true and use the context hook
+
+```
+app.tsx
+```
+
+```tsx
+import React, { Component } from 'react'
+
+import ReactOpenWallet from 'react-open-wallet'
+
+class App extends Component {
+  render() {
+    return (
+      <ReactOpenWallet hideButton>
+        <Home />
+      </ReactOpenWallet>
+    )
+  }
+}
+```
+
+### Component props
+
+| Name       | Type | Default | Description    |
+| ---------- | ---- | ------- | -------------- |
+| hideButton | bool | false   | Hide entire UI |
+
+```
+home.tsx
+```
+
+```tsx
+import React, { Component } from 'react'
+
+import { useWallet } from 'react-open-wallet'
+
+class Home extends Component {
+  const { requestAccount } = useWallet()
+
+  render() {
+    return (
+      <button onClick={requestAccount}>Connect wallet</button>
+    )
+  }
+}
+```
+
+### Context props
+
+| Name           | Type          | Default | Description                          |
+| -------------- | ------------- | ------- | ------------------------------------ |
+| account        | string        | ''      | Your current wallet address          |
+| checkWallet    | () => boolean | void    | Check if you have MetaMask installed |
+| requestAccount | () => void    | void    | Open MetaMask connect button         |
 
 ## License
 

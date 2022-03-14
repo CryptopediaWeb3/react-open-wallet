@@ -1,46 +1,94 @@
-import React, { createContext, useState, useEffect, useContext } from 'react';
+import React, { createContext, useEffect, useState, useContext } from 'react';
 
-const walletContext = createContext({
-  account: ''
+const WalletContext = createContext({
+  account: '',
+  checkWallet: () => {},
+  requestAccount: () => {}
 });
 
+const checkWallet = () => {
+  if (!window.ethereum) {
+    console.error('Install MetaMask');
+  }
+
+  return window.ethereum !== undefined || window.ethereum !== null;
+};
+const requestAccount = async setAccount => {
+  if (window.ethereum) {
+    const metaAccounts = await window.ethereum.request({
+      method: 'eth_requestAccounts'
+    });
+    setAccount(metaAccounts[0]);
+  }
+};
+
+const useListener = setAccount => {
+  useEffect(() => {
+    checkWallet();
+
+    const updateWallet = metaAccounts => {
+      if (metaAccounts.length) {
+        setAccount(metaAccounts[0]);
+      } else {
+        setAccount('');
+      }
+    };
+
+    if (window.ethereum) {
+      window.ethereum.on('accountsChanged', updateWallet);
+      window.ethereum.request({
+        method: 'eth_accounts'
+      }).then(updateWallet);
+    }
+
+    return () => {
+      if (window.ethereum) {
+        window.ethereum.removeListener('accountsChanged', updateWallet);
+      }
+    };
+  }, [setAccount]);
+};
+
 const ReactOpenWallet = ({
-  children
+  children,
+  hideButton
 }) => {
   const [account, setAccount] = useState('');
 
-  const checkWallet = () => {
-    if (!window.ethereum) {
-      console.error('Install MetaMask');
-    }
-  };
+  const getAccount = () => requestAccount(setAccount);
 
-  const getAccounts = async () => {
-    if (window.ethereum) {
-      const metaAccounts = await window.ethereum.request({
-        method: 'eth_requestAccounts'
-      });
-      setAccount(metaAccounts[0]);
-    }
-  };
-
-  useEffect(() => {
-    checkWallet();
-  }, []);
-  return React.createElement(walletContext.Provider, {
+  useListener(setAccount);
+  return React.createElement(WalletContext.Provider, {
     value: {
-      account
+      account,
+      checkWallet,
+      requestAccount: getAccount
     }
-  }, React.createElement("button", {
-    onClick: getAccounts
+  }, !hideButton && React.createElement("button", {
+    style: {
+      appearance: 'none',
+      outline: 'none',
+      backgroundImage: 'linear-gradient(92.88deg, #455EB5 9.16%, #5643CC 43.89%, #673FD7 64.72%)',
+      borderRadius: '10px',
+      borderStyle: 'none',
+      boxSizing: 'border-box',
+      color: '#FFFFFF',
+      cursor: 'pointer',
+      fontFamily: 'monospace',
+      fontSize: '16px',
+      fontWeight: 'bold',
+      padding: '15px ',
+      textAlign: 'center'
+    },
+    onClick: getAccount
   }, "Connect Wallet"), children);
 };
 
 const useWallet = () => {
-  const walletCtx = useContext(walletContext);
+  const walletCtx = useContext(WalletContext);
   return walletCtx;
 };
 
 export default ReactOpenWallet;
-export { useWallet, walletContext };
+export { useWallet };
 //# sourceMappingURL=index.modern.js.map

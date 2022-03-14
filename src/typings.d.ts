@@ -16,3 +16,7 @@ declare module '*.svg' {
   export default svgUrl
   export { svgComponent as ReactComponent }
 }
+
+interface ReactOpenWalletProps {
+  hideButton?: boolean
+}

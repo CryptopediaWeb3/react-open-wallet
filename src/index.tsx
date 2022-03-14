@@ -1,51 +1,65 @@
-import React, { createContext, useEffect, useState, useContext } from 'react'
+import React, { useState, useContext } from 'react'
 
-export const walletContext = createContext({ account: '' })
-const ReactOpenWallet: React.FC = ({ children }) => {
-  // ESTADO DE WALLET
+import { WalletContext, WalletContextProps } from './context'
+import { checkWallet, requestAccount } from './tools'
+import { useListener } from './hooks'
+
+// COMPONENT
+const ReactOpenWallet: React.FC<ReactOpenWalletProps> = ({
+  children,
+  hideButton
+}) => {
+  // WALLET STATE
   const [account, setAccount] = useState<string>('')
 
-  // VERIFICAR QUE TENGA METAMASK
-  const checkWallet = () => {
-    if (!window.ethereum) {
-      console.error('Install MetaMask')
-    }
-  }
+  // REQUEST ACCOUNTS
+  const getAccount = () => requestAccount(setAccount)
 
-  // SOLICITAR CUENTAS
-  const getAccounts = async () => {
-    if (window.ethereum) {
-      // @ts-ignore
-      const metaAccounts = await window.ethereum.request({
-        method: 'eth_requestAccounts'
-      })
-      setAccount(metaAccounts[0])
-    }
-  }
-
-  // VERIFICAR UNA VEZ
-  useEffect(() => {
-    checkWallet()
-  }, [])
+  // HOOKS
+  useListener(setAccount)
 
   return (
-    <walletContext.Provider value={{ account }}>
-      <button onClick={getAccounts}>Connect Wallet</button>
+    <WalletContext.Provider
+      value={{ account, checkWallet, requestAccount: getAccount }}
+    >
+      {!hideButton && (
+        <button
+          style={{
+            appearance: 'none',
+            outline: 'none',
+            backgroundImage:
+              'linear-gradient(92.88deg, #455EB5 9.16%, #5643CC 43.89%, #673FD7 64.72%)',
+            borderRadius: '10px',
+            borderStyle: 'none',
+            boxSizing: 'border-box',
+            color: '#FFFFFF',
+            cursor: 'pointer',
+            fontFamily: 'monospace',
+            fontSize: '16px',
+            fontWeight: 'bold',
+            padding: '15px ',
+            textAlign: 'center'
+          }}
+          onClick={getAccount}
+        >
+          Connect Wallet
+        </button>
+      )}
       {children}
-    </walletContext.Provider>
+    </WalletContext.Provider>
   )
 }
 
-// CONFIGURACION PARA TYPESCRIPT
+// SETTING ETH GLOBAL OBJECT
 declare global {
   interface Window {
     ethereum: unknown
   }
 }
 
-// HOOK DE CONTEXTO
+// CONTEXT HOOK
 export const useWallet = () => {
-  const walletCtx = useContext(walletContext)
+  const walletCtx: WalletContextProps = useContext(WalletContext)
   return walletCtx
 }
 

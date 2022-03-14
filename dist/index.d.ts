@@ -1,14 +1,10 @@
 import React from 'react';
-export declare const walletContext: React.Context<{
-    account: string;
-}>;
-declare const ReactOpenWallet: React.FC;
+import { WalletContextProps } from './context';
+declare const ReactOpenWallet: React.FC<ReactOpenWalletProps>;
 declare global {
     interface Window {
         ethereum: unknown;
     }
 }
-export declare const useWallet: () => {
-    account: string;
-};
+export declare const useWallet: () => WalletContextProps;
 export default ReactOpenWallet;
